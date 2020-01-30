@@ -1,3 +1,4 @@
 /*Shell Header File*/
-
-int shell_main();
+int printTokens(char*);
+void ctrlzIgnore(int);
+void ctrlcIgnore(int);
