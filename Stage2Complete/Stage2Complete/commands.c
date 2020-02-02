@@ -14,7 +14,7 @@ int printTokens(char** cmdToken)
 {
 	//Declare local variables.
 	int pos = 0;
-	
+
 	//Loop whilst cmdToken is not NULL.
 	while(cmdToken[pos] != NULL) {
 

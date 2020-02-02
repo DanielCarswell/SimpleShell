@@ -11,9 +11,9 @@
 int main(void)
 {
 	//Initialise local variables.
-	char line[512];
-	char** tokens;
+	char* line;
 	char* token;
+	char** tokens;
 	int exit = 0;
 
 	//Initialising Ctrl-z and Ctrl-z signal ignore.
@@ -22,17 +22,11 @@ int main(void)
 
 	//Loop until "exit" or ctrl-d entered by user.
 	do {
-		//Prompt user for input.
-		printf("> ");
 
-		//Read user input. 
-		if(fgets(line, 512, stdin) == NULL)
-		{
-			printf("\nexitting\n");
-			_exit(1);
-		}
+		//Gets user to input commands.
+		line = getUserInput();
 
-		//Parse user input.
+		//Tokenize and parse user input.
 		token = strtok(line, " \n");
 		tokens = parseInput(token);
 
@@ -48,7 +42,33 @@ int main(void)
 	return exit;
 }
 
-//In stage 1, I just used the strok Char* token
+//Problem was occuring where I believe line was
+//not being overwritten when asking for user input in main
+//by creating a seperate method that returns a new line each
+//time this problem was resolved.
+char* getUserInput(void)
+{
+	//Declare local variable and allocate memory.
+	char *line = (char *) malloc(sizeof(char) * 512);
+
+	//Prompt user for input.
+	printf("> ");
+
+	//Read user input. 
+	if(fgets(line, 512, stdin) == NULL)
+	{
+		//Exit shell.
+		_exit(1);
+	}
+
+	//Return user input
+	return line;
+}
+
+//In stage 1, I just used the strok Char* token for display
+//For stage 2 to work properly I had to parse the data to
+//a double pointer for the execvp command to interpret and
+//run the command properly.
 char** parseInput(char* token)
 {
 	//Declaring local variables.
