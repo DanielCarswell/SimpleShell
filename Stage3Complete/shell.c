@@ -6,11 +6,51 @@
 #include <string.h>
 #include <signal.h>
 
+//Global variable initialisation.
+char* InitialHomeEnv;
+char* InitialPathEnv;
+
+//Initialising a character array that is used to compare
+//inbuilt function name calls, then uses appropriate element found
+//to call the right function pointer from internal_functions.
+char* internal_commands[] = {
+  "getpath",
+  "setpath"
+};
+
+//Initialising array of function pointers for running inbuilt functions.
+int (*internal_functions[]) (char **) = {
+  &getpath,
+  &setpath
+};
 
 //Main component of the shell, cycles and continues to ask for commands
 //Then interpret them and execute appropriate functions or methods.
 int main(void)
 {
+	//Allocating memory to char pointers holding initial enviornments.
+	InitialHomeEnv = (char*) malloc(100*sizeof(char*));
+	InitialPathEnv = (char*) malloc(100*sizeof(char*));
+
+	//Copying the environment data to global variables for 
+	//restoring later.
+	strcpy(InitialHomeEnv,getenv("HOME"));
+	strcpy(InitialPathEnv,getenv("PATH"));
+
+	//Setting environment of path equal to that of home path,
+	//necessary for Stage 3 demonstration.
+	int success = setenv("PATH", InitialHomeEnv, 1);
+
+	//Displays a message if changing the 'PATH' variable failed.
+	if(success == -1)
+		perror("Failed to change PATH environment");
+
+	//Changes the current working directory to that of the
+	//'HOME' variable directory and displays an error if fails.	
+	if (chdir(getenv("HOME")) != 0) {
+		perror("Directory change failed");
+	}
+
 	//Initialise local variables.
 	char* line;
 	char* token;
@@ -21,6 +61,7 @@ int main(void)
 	signal(SIGTSTP, ctrlzIgnore);
 	signal(SIGINT, ctrlcIgnore);
 
+	//printf("%s", InitialPathEnv);
 	//Loop until "exit" or ctrl-d entered by user.
 	do {
 
@@ -29,7 +70,7 @@ int main(void)
 
 		//Tokenize and parse user input.
 		token = strtok(line, " \n");
-		
+
 		if (token) {
 			tokens = parseInput(token);
 
@@ -40,8 +81,10 @@ int main(void)
 			free(*tokens);
 			tokens = NULL;
   		}
+		
 	} while(exit != -1);
 
+	resetPaths();
 	//Returns exit to close shell since returning from main
 	//successfully closes the program.
 	return exit;
@@ -62,6 +105,7 @@ char* getUserInput(void)
 	//Read user input. 
 	if(fgets(line, 512, stdin) == NULL)
 	{
+		resetPaths();
 		//Exit shell.
 		_exit(1);
 	}
@@ -85,7 +129,10 @@ char** parseInput(char* token)
 
 	//Checks if user has inputted "exit" to close the shell.
 	if(strcmp(token, "exit") == 0)
-			_exit(1);
+	{
+		resetPaths();
+		_exit(1);
+	}
 
 	//Loops whilst token is not NULL, so when another token exists.
 	while(token != NULL)
@@ -116,6 +163,30 @@ char** parseInput(char* token)
 	return tokens;
 }
 
+
+//Developed in Stage 3, resets 'HOME' and 'PATH' variables,
+//upon successful closing of the shell.
+void resetPaths(void)
+{
+	//Changing 'HOME' variable to original value.
+	int envReset = setenv("HOME", InitialHomeEnv, 1);
+
+	//Printing error if resetting 'HOME' variable fails.
+	if(envReset == -1)
+		perror("Environment reset failed.");
+
+	//Changing 'PATH' variable to original value.
+	envReset = setenv("PATH", InitialPathEnv, 1);
+
+	//Printing error if resetting 'HOME' variable fails.
+	if(envReset == -1)
+		perror("Environment reset failed.");
+
+	//Freeing allocated memory from InitialHomeEnv and InitialPathEnv.
+	free(InitialHomeEnv);
+	free(InitialPathEnv);
+}
+
 void ctrlzIgnore(int sig_num) 
 { 
 	//Resets the signal to stop upon ctrl-z input again.
@@ -126,5 +197,4 @@ void ctrlcIgnore(int sig_num)
 { 
 	//Resets the signal to stop upon ctrl-c input again.
 	signal(SIGINT, ctrlcIgnore);
-} 
-
+}

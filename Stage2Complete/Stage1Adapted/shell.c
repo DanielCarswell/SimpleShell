@@ -1,4 +1,5 @@
 #include "shell.h"
+#include "commands.c"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -28,13 +29,16 @@ int main(void)
 
 		//Tokenize and parse user input.
 		token = strtok(line, " \n");
-		tokens = parseInput(token);
+		if (token) {
+			tokens = parseInput(token);
 
-		//Print tokens and return int.
-		exit = printTokens(tokens);
+			//Print tokens and return int.
+			exit = printTokens(tokens);
 		
-		//Frees the current memory of tokens.
-		free(tokens);
+			//Frees the current memory of tokens.
+			free(*tokens);
+			tokens = NULL;
+  		}
 	} while(exit != -1);
 
 	//Returns exit to close shell since returning from main
@@ -58,6 +62,7 @@ char* getUserInput(void)
 	if(fgets(line, 512, stdin) == NULL)
 	{
 		//Exit shell.
+		printf("\n");
 		_exit(1);
 	}
 
@@ -101,12 +106,6 @@ char** parseInput(char* token)
 		token = strtok(NULL, " \n");
 	}
 
-	//Sometimes an extra position of token is assigned
-	//the last token of the last users input, this checks
-	//if it has occured and sets it to NULL in such case. 
-	if(tokens[pos] != NULL)
-		tokens[pos] == NULL;
-
 	//Return tokens.
 	return tokens;
 }
@@ -114,7 +113,7 @@ char** parseInput(char* token)
 void ctrlzIgnore(int sig_num) 
 { 
 	//Resets the signal to stop upon ctrl-z input again.
-        signal(SIGTSTP, ctrlzIgnore);
+	signal(SIGTSTP, ctrlzIgnore);
 }
 
 void ctrlcIgnore(int sig_num) 
