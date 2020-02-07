@@ -9,5 +9,5 @@ void resetPaths(void);
 int setpath(char**);
 int getpath(char**);
 int cd(char**);
-int run_history(int);
+int run_history(int,char**);
 int element_in_history(char**);

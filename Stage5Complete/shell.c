@@ -103,8 +103,9 @@ char* getUserInput(void)
 	//Read user input. 
 	if(fgets(line, 512, stdin) == NULL)
 	{
-		resetPaths();
 		//Exit shell.
+		printf("\n");		
+		resetPaths();
 		_exit(1);
 	}
 
@@ -128,6 +129,8 @@ char** parseInput(char* token)
 	//Checks if user has inputted "exit" to close the shell.
 	if(strcmp(token, "exit") == 0)
 	{
+		//Exit shell
+		printf("\n");
 		resetPaths();
 		_exit(1);
 	}

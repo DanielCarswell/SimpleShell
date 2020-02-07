@@ -53,7 +53,8 @@ int runProcess(char** commands)
 	if(strncmp(commands[0], "!", 1) == 0)
 	{
 		int iuu = element_in_history(commands);
-		return 0;
+		if(iuu == 1)
+			return 0;
 	}
 	//Handling internal commands.
 	for(int i = 0; i<3;i++)
@@ -178,19 +179,19 @@ int element_in_history(char** commands)
 		if(strncmp(&commands[0][1],"\0",1) == 0)
 			printf("No element of history selected\n");
 		else if(strncmp(&commands[0][1],"!",1) == 0)
-			run_history(1);
+			run_history(1, commands);
 		else
 			for(int i = 0; i < 10; i++)
 			{
 				if(strncmp(&commands[0][1], chars[i], 1) == 0)
 					if(strncmp(&commands[0][2], "\0", 1) == 0)
-						check = run_history(i);
+						check = run_history(i, commands);
 					else
 						for(int j = 0; j < 10; j++)
 						{
 							if(strncmp(&commands[0][2], chars[j], 1) == 0)
 								if(strncmp(&commands[0][3], "\0", 1) == 0)
-									check = run_history((i*10) + j);
+									check = run_history(((i*10) + j), commands);
 								else
 									printf("That element of history is out of bounds\n");
 						}
@@ -205,13 +206,21 @@ int element_in_history(char** commands)
 	return check;
 }
 
-int run_history(int i)
+int run_history(int i, char** commands)
 {
-	printf("%d%s\n", i, current_history[0]);
-	char* token = strtok(current_history[0], " \n");
-	char** oldCommand = parseInput(token);
-	int status = runProcess(oldCommand);
-	free(*oldCommand);
-	oldCommand = NULL;
+	//Current error: No such file or directoy, rewriting commands having some problem?
+	if(current_history[i-1] != NULL)
+	{
+		free(*commands);
+		commands = NULL;
+		printf("%d%s\n", i, current_history[i-1]);
+		char* ab = strtok(strdup(current_history[i-1]), " \n");
+		commands = parseInput(ab);
+		printTokens(commands);
+		free(ab);
+		return 0;
+	}
+	else
+		printf("No element in history\n");
 	return 1;
 }
