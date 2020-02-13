@@ -5,11 +5,11 @@
 char temp[50];
 char* history[99];
 
-int add2array(char*, int);
+int add_to_history(char*, int);
 
 int main(void)
 {
-    int i = add2array("aw doawkwoa kaw", 0);
+    int i = add_to_history("aw doawkwoa kaw", 0);
     printf("%s", history[0]);
 	free(s1[0]);
 	free(*s1);
