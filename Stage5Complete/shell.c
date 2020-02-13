@@ -1,5 +1,6 @@
 #include "shell.h"
 #include "commands.c"
+#include "history.c"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -51,6 +52,10 @@ int main(void)
 	if (chdir(getenv("HOME")) != 0) {
 		perror("Directory change failed");
 	}
+
+	//Load history.
+	if(load_history() == -1)
+		printf("Failed to load history");
 
 	//Initialise local variables.
 	char* line;
@@ -192,6 +197,9 @@ void resetPaths(void)
 	//Printing error if resetting 'HOME' variable fails.
 	if(envReset == -1)
 		perror("Environment reset failed.");
+
+	if(save_history() == -1)
+		printf("Failed to save history.");
 
 	//Frees the current memory of current_history.
 	int pos = 0;

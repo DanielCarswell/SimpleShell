@@ -1,15 +1,23 @@
 /*Shell Header File*/
-int printTokens(char**);
+
+/*shell.c*/
+char* getUserInput(void);
+char** parseInput(char*);
 void ctrlzIgnore(int);
 void ctrlcIgnore(int);
-char** parseInput(char*);
-char* getUserInput(void);
-int runProcess(char**);
 void resetPaths(void);
+
+/*commands.c*/
+int printTokens(char**);
+int runProcess(char**);
 int setpath(char**);
 int getpath(char**);
 int cd(char**);
+
+/*history.c*/
 int run_history(int,char**);
 int element_in_history(char**);
 int add_to_history(char[]);
-int print_history(char **);
+int print_history(char**);
+int save_history(void);
+int load_history(void);
