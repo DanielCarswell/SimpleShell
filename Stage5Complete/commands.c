@@ -57,7 +57,7 @@ int runProcess(char** commands)
 			return 0;
 	}
 	//Handling internal commands.
-	for(int i = 0; i<4;i++)
+	for(int i = 0; i < 4;i++)
 	{
 		if(strcmp(commands[0], internal_commands[i]) == 0)
 			return (*internal_functions[i])(commands);
@@ -66,8 +66,6 @@ int runProcess(char** commands)
 	//Declaring local variables.
 	pid_t c_pid, pid;
 	int status;
-
-	//add_to_history(commands);
 
 	//Beginning fork, splitting into child and parent processes.
 	c_pid = fork();
@@ -181,7 +179,7 @@ int element_in_history(char** commands)
 		if(strncmp(&commands[0][1],"\0",1) == 0)
 			printf("No element of history selected\n");
 		else if(strncmp(&commands[0][1],"!",1) == 0)
-			run_history(1, commands);
+			check = run_history(1, commands);
 		else
 			for(int i = 0; i < 10; i++)
 			{
@@ -213,52 +211,44 @@ int run_history(int i, char** commands)
 	//Current error: No such file or directoy, rewriting commands having some problem?
 	if(current_history[i-1] != NULL)
 	{
-		//free(*commands);
-		//commands = NULL;
-		printf("%d%s\n", i, current_history[i/*-1*/]);
-		char* ab = strtok(strdup(current_history[i/*-1*/]), " \n");
+		char* ab = strtok(strdup(current_history[i-1]), " \n");
 		char** ncommands = parseInput(ab);
-		printTokens(ncommands);
 		int i = runProcess(ncommands);
 		free(ab);
-		return i;
+
+		if(i == 0)
+			return 1;
+		else 
+			return i;
 	}
 	else
 		printf("No element in history\n");
 	return 1;
 }
 
-void add_to_history(char** commands)
+int add_to_history(char temp[])
 {
-	int n, pos;
+	if(temp[0] == 'p' && temp[1] == 'r' &&temp[2] == 'i' &&temp[3] == 'n' &&temp[4] == 't' && temp[5] == 'h')
+		return 0;
 
+	int n;
 	for(int i = 0; i < 100; i++)
 	{
 		if(current_history[i] == NULL || strlen(current_history[i]) == 0 || i == 99)
 		{
 			n = i;
-			current_history[n] = (char*) malloc(sizeof(char*) * 512);
-			current_history[n] = "";
+			current_history[n] = (char *) malloc(sizeof(char) * (strlen(temp)+1));
 			break;
 		}
 	}
 
-	for(int x = n; x > 0; x--)
-	{
-		current_history[x] = current_history[x-1];
-	}
+	if(n == 99)
+		for(int x = n; x > 0; x--)
+			current_history[x] = current_history[x-1];
 
-	//printf("%s%d", current_history[n], n);
-	printf("l");
-	strcat(current_history[n], "ls");
-	while(commands[pos] != NULL) {
-		printf("hello");
-		printf("%s", commands[pos]);
-		strcat(current_history[n], strcat(" ", commands[pos]));
-		pos++;
-	}
 
-	//current_history[0] = historyElem;
+    strcpy(current_history[n], temp);
+    return 1;
 }
 
 int print_history(char ** commands)
@@ -267,7 +257,7 @@ int print_history(char ** commands)
 	{
 		if(current_history[i] == NULL)
 			break;
-		printf("%s\n", current_history[i]);
+		printf("%s", current_history[i]);
 	}
 
 	return 0;

@@ -13,9 +13,7 @@
 char* InitialHomeEnv;
 char* InitialPathEnv;
 
-char* current_history[99]; //= {
-	//"ls -l"
-//};
+char* current_history[99];
 
 //Initialising a character array that is used to compare
 //inbuilt function name calls, then uses appropriate element found
@@ -58,6 +56,7 @@ int main(void)
 	char* line;
 	char* token;
 	char** tokens;
+	char temp[Input_Max];
 	int exit = 0;
 
 	//Initialising Ctrl-z and Ctrl-z signal ignore.
@@ -69,16 +68,20 @@ int main(void)
 	do {
 
 		//Gets user to input commands.
-		line = getUserInput();	
+		line = getUserInput();
+		
+		if(line[0] != '!')
+			{
+				sprintf(temp, line);
+				exit = add_to_history(temp);	
+			}
 
 		//Tokenize and parse user input.
 		token = strtok(line, Delimiter);
 
 		if (token) {
 			tokens = parseInput(token);
-			add_to_history(tokens);
 			//if(strncmp(tokens[0], "!", 1) == 0)
-			
 
 			//Run command and return int.
 			exit = runProcess(tokens);
@@ -189,6 +192,14 @@ void resetPaths(void)
 	//Printing error if resetting 'HOME' variable fails.
 	if(envReset == -1)
 		perror("Environment reset failed.");
+
+	//Frees the current memory of current_history.
+	int pos = 0;
+	while(current_history[pos] == NULL)
+	{
+		free(current_history[pos]);
+		pos++;	
+	}
 
 	//Freeing allocated memory from InitialHomeEnv and InitialPathEnv.
 	free(InitialHomeEnv);
