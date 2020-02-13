@@ -6,9 +6,6 @@
 #include <string.h>
 #include <signal.h>
 
-#define Input_Max 512
-#define Delimiter " \n\t;&><|"
-
 //Global variable initialisation.
 char* InitialHomeEnv;
 char* InitialPathEnv;
@@ -23,16 +20,14 @@ char* current_history[99]; //= {
 char* internal_commands[] = {
   "getpath",
   "setpath",
-  "cd",
-  "printh"
+  "cd"
 };
 
 //Initialising array of function pointers for running inbuilt functions.
 int (*internal_functions[]) (char **) = {
   &getpath,
   &setpath,
-  &cd,
-  &print_history
+  &cd
 };
 
 //Main component of the shell, cycles and continues to ask for commands
@@ -69,16 +64,14 @@ int main(void)
 	do {
 
 		//Gets user to input commands.
-		line = getUserInput();	
+		line = getUserInput();
+		current_history[0] = (char*) line;
 
 		//Tokenize and parse user input.
-		token = strtok(line, Delimiter);
+		token = strtok(line, " \n");
 
 		if (token) {
 			tokens = parseInput(token);
-			add_to_history(tokens);
-			//if(strncmp(tokens[0], "!", 1) == 0)
-			
 
 			//Run command and return int.
 			exit = runProcess(tokens);
@@ -109,13 +102,13 @@ int main(void)
 char* getUserInput(void)
 {
 	//Declare local variable and allocate memory.
-	char *line = (char *) malloc(sizeof(char) * Input_Max);
+	char *line = (char *) malloc(sizeof(char) * 512);
 
 	//Prompt user for input.
 	printf("> ");
 
 	//Read user input. 
-	if(fgets(line, Input_Max, stdin) == NULL)
+	if(fgets(line, 512, stdin) == NULL)
 	{
 		//Exit shell.
 		printf("\n");		
@@ -165,7 +158,7 @@ char** parseInput(char* token)
 		}
 
 		//Gets next token.
-		token = strtok(NULL, Delimiter);
+		token = strtok(NULL, " \n");
 	}
 
 	//Return tokens.

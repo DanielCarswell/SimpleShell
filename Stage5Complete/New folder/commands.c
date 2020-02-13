@@ -52,12 +52,12 @@ int runProcess(char** commands)
 {
 	if(strncmp(commands[0], "!", 1) == 0)
 	{
-		int check = element_in_history(commands);
-		if(check == 1)
+		int iuu = element_in_history(commands);
+		if(iuu == 1)
 			return 0;
 	}
 	//Handling internal commands.
-	for(int i = 0; i<4;i++)
+	for(int i = 0; i<3;i++)
 	{
 		if(strcmp(commands[0], internal_commands[i]) == 0)
 			return (*internal_functions[i])(commands);
@@ -213,15 +213,14 @@ int run_history(int i, char** commands)
 	//Current error: No such file or directoy, rewriting commands having some problem?
 	if(current_history[i-1] != NULL)
 	{
-		//free(*commands);
-		//commands = NULL;
-		printf("%d%s\n", i, current_history[i/*-1*/]);
-		char* ab = strtok(strdup(current_history[i/*-1*/]), " \n");
-		char** ncommands = parseInput(ab);
-		printTokens(ncommands);
-		int i = runProcess(ncommands);
+		free(*commands);
+		commands = NULL;
+		printf("%d%s\n", i, current_history[i-1]);
+		char* ab = strtok(strdup(current_history[i-1]), " \n");
+		commands = parseInput(ab);
+		printTokens(commands);
 		free(ab);
-		return i;
+		return 0;
 	}
 	else
 		printf("No element in history\n");
@@ -229,6 +228,37 @@ int run_history(int i, char** commands)
 }
 
 void add_to_history(char** commands)
+{
+	printf("hi");
+	int n, pos;
+	char* historyElem = (char*) malloc(512 * sizeof(char*));
+
+	while(commands[pos] != NULL)
+	{
+		//strcat(historyElem, " ");
+		strcat(strcat(historyElem, " "), commands[pos]);
+		pos++;
+	}
+
+	for(int i = 0; i < 100; i++)
+	{
+		if(current_history[i] == NULL)
+			n = i;
+	}
+
+	for(int x = n; x > 0; x--)
+	{
+		current_history[x] = current_history[x-1];
+	}
+
+	current_history[0] = historyElem;
+	printf("%s", current_history[0]);
+	free(historyElem);
+
+	//current_history[0] = historyElem;
+}
+
+//void add_to_history(char* line)
 {
 	int n, pos;
 
@@ -249,26 +279,7 @@ void add_to_history(char** commands)
 	}
 
 	//printf("%s%d", current_history[n], n);
-	printf("l");
-	strcat(current_history[n], "ls");
-	while(commands[pos] != NULL) {
-		printf("hello");
-		printf("%s", commands[pos]);
-		strcat(current_history[n], strcat(" ", commands[pos]));
-		pos++;
-	}
+	memcpy(current_history[n], line, strlen(line)+1);
 
 	//current_history[0] = historyElem;
-}
-
-int print_history(char ** commands)
-{
-	for(int i = 0; i < 100; i++)
-	{
-		if(current_history[i] == NULL)
-			break;
-		printf("%s\n", current_history[i]);
-	}
-
-	return 0;
 }
