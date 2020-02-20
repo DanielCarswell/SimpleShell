@@ -218,7 +218,7 @@ void resetPaths(void)
 void ctrlzIgnore(int sig_num) 
 { 
 	//Resets the signal to stop upon ctrl-z input again.
-        signal(SIGTSTP, ctrlzIgnore);
+    signal(SIGTSTP, ctrlzIgnore);
 }
 
 void ctrlcIgnore(int sig_num) 

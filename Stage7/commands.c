@@ -7,6 +7,7 @@
 
 //External global variables, initialised in shell.c.
 extern char* InitialPathEnv;
+extern char* current_history[];
 extern char* internal_commands[];
 extern int (*internal_functions[]) (char**);
 
@@ -49,12 +50,26 @@ int printTokens(char** commands)
 //allowing it to run on the parent process could cause.
 int runProcess(char** commands)
 {
-	//Handling internal commands.
-	for(int i = 0; i < internalCommandCount(); i++)
+	if(strncmp(commands[0], "!", 1) == 0)
 	{
+		int check = element_in_history(commands);
+		if(check == 1)
+			return 0;
+	}
+
+	check_alias(commands);
+	//printTokens(commands);
+
+	//Handling internal commands.
+	for(int i = 0; i < internalCommandsCount();i++)
+	{
+		//printf("%s\n", commands[0]);
 		if(strcmp(commands[0], internal_commands[i]) == 0)
 			return (*internal_functions[i])(commands);
 	}
+
+	//printTokens(commands);
+	//return -1;
 
 	//Declaring local variables.
 	pid_t c_pid, pid;
@@ -89,6 +104,26 @@ int runProcess(char** commands)
 
 	//Returns 0, this will mean the shell will keep running.
 	return 0;
+}
+
+//Created in Stage 4, changes the current working directory
+//to a different directory, moving between folders by inputting the name
+//of a folder that exists in the current directory, .. to step out of a directory
+//or an absolute path.
+int cd(char** commands)
+{
+	//Checks if the 2nd part of commands is null, printing a message if so.
+	if(commands[1] == NULL)
+		printf("No path change entered\n");
+	
+	//in the case the command is not null.	
+	else
+		//Attempts to change current directory and sends string to perror if fails.
+		if (chdir(commands[1]) != 0)
+			perror("Directory change failed");
+
+    //Returns 0, closing the function.    	
+    return 0;
 }
 
 //Created in Stage 3, displays the 'PATH' variable data.

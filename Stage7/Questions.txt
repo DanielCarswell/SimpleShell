@@ -1,0 +1,3 @@
+
+Should history invocations make the old command being run the last element in history?
+

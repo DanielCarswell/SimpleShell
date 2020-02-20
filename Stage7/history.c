@@ -10,23 +10,22 @@ extern char* current_history[];
 
 int add_to_history(char temp[])
 {
-  if(temp == NULL || temp[0] == ' ' || temp[0] == '\r' || strcmp(temp, "\n") == 0 || temp[0] == '\e' 
-  	|| (temp[0] == 'e' && temp[1] == 'x' && temp[2] == 'i' && temp[3] == 't' ))
-    return 0;
+	if(temp == NULL || temp[0] == ' ' || temp[0] == '\r' || strcmp(temp, "\n") == 0 || temp[0] == '\e' 
+		|| (temp[0] == 'e' && temp[1] == 'x' && temp[2] == 'i' && temp[3] == 't' ))
+    	return 0;
 
-  int n;
+  	int n;
+	for(int i = 0; i < 100; i++)
+  		if(current_history[i] == NULL || strcmp(current_history[i], "") == 0 || strlen(current_history[i]) == 0 || i == 99)
+    	{
+      		n = i;
+      		current_history[n] = (char *) malloc(sizeof(char) * (strlen(temp)+1));
+      		break;
+    	}
 
-  for(int i = 0; i < 100; i++)
-    if(current_history[i] == NULL || strcmp(current_history[i], "") == 0 || strlen(current_history[i]) == 0 || i == 99)
-    {
-      n = i;
-      current_history[n] = (char *) malloc(sizeof(char) * (strlen(temp)+1));
-      break;
-    }
-
-  if(n == 99)
-    for(int x = n; x > 0; x--)
-      current_history[x] = current_history[x-1];
+    if(n == 99)
+    	for(int x = n; x > 0; x--)
+      	current_history[x] = current_history[x-1];
 
     strcpy(current_history[n], temp);
     return 1;
@@ -41,7 +40,6 @@ int element_in_history(char** commands)
 	//which compares a full string.
 	if(strncmp(commands[0], "!", 1) == 0)
 	{
-		char* abc = commands[0];
 		if(strncmp(&commands[0][1],"\0",1) == 0)
 			printf("No element of history selected\n");
 		else if(strncmp(&commands[0][1],"!",1) == 0)
@@ -56,10 +54,12 @@ int element_in_history(char** commands)
 						for(int j = 0; j < 10; j++)
 						{
 							if(strncmp(&commands[0][2], chars[j], 1) == 0)
+							{
 								if(strncmp(&commands[0][3], "\0", 1) == 0)
 									check = run_history((i*10) + j);
 								else
 									printf("That element of history is out of bounds\n");
+							}
 						}
 				else if(i == 9 && check == 0 && strncmp(&commands[0][3], "\0", 1) == 0)
 				{

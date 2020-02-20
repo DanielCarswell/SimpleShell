@@ -3,9 +3,10 @@
 /*shell.c*/
 char* getUserInput(void);
 char** parseInput(char*);
+void resetPaths(void);
+int internalCommandsCount(void);
 void ctrlzIgnore(int);
 void ctrlcIgnore(int);
-void resetPaths(void);
 
 /*commands.c*/
 int printTokens(char**);
@@ -21,3 +22,15 @@ int add_to_history(char[]);
 int print_history(char**);
 int save_history(void);
 int load_history(void);
+
+/*alias.c*/
+int check_alias(char**);
+int add_alias(char**);
+int alias_count(void);
+int replace_alias(char**, char*);
+int check_external_commands(char[]);
+char* charpointertoarray(char**);
+char* charpointertoarray2(char**);
+//int run_alias(char**);
+//int save_aliases(void);
+//int load_aliases(void);

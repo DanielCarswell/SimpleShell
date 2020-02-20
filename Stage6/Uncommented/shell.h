@@ -3,6 +3,7 @@
 /*shell.c*/
 char* getUserInput(void);
 char** parseInput(char*);
+int internalCommandsCount(void);
 void ctrlzIgnore(int);
 void ctrlcIgnore(int);
 void resetPaths(void);

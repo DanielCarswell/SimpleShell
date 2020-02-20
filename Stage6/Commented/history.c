@@ -115,24 +115,28 @@ int print_history(char ** commands)
 
 int save_history(void)
 {
-  int pos = 0;
-  FILE* fPointer;
-  char holdValue[Input_Max];
-  char concat[15];
-  strcpy(concat, "\n");
-  fPointer = fopen(".hist_list", "w");
+	if (chdir(getenv("HOME")) != 0) {
+		perror("Directory change failed");
+	}
+	
+	int pos = 0;
+    FILE* fPointer;
+    char holdValue[Input_Max];
+    char concat[15];
+    strcpy(concat, "\n");
+    fPointer = fopen(".hist_list", "w");
   
-  if(fPointer == NULL) return -1;
+    if(fPointer == NULL) return -1;
 
-  while(current_history[pos] != NULL){
-    strcpy(holdValue, current_history[pos]);  
-    strcat(holdValue, concat);
-    fputs(holdValue, fPointer);
-    pos++;
-  }
+    while(current_history[pos] != NULL){
+    	strcpy(holdValue, current_history[pos]);  
+    	strcat(holdValue, concat);
+    	fputs(holdValue, fPointer);
+    	pos++;
+  	}
 
-  fclose(fPointer);
-  return 0;
+  	fclose(fPointer);
+  	return 0;
 }
 
 int load_history(void)
