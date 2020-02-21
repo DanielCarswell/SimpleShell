@@ -38,8 +38,8 @@ char* command_aliases[99][2];
 
 int main(void)
 {
-	InitialHomeEnv = (char*) malloc(sizeof(char)*(strlen(getenv("HOME"))+1));
-	InitialPathEnv = (char*) malloc(sizeof(char)*(strlen(getenv("PATH"))+1));
+	InitialHomeEnv = (char*) malloc(100*sizeof(char*));
+	InitialPathEnv = (char*) malloc(100*sizeof(char*));
 
 	strcpy(InitialHomeEnv,getenv("HOME"));
 	strcpy(InitialPathEnv,getenv("PATH"));
@@ -83,6 +83,7 @@ int main(void)
 			}
 
 			free(*tokens);
+			//tokens = NULL;
   		}
 		
 	} while(exit != -1);
@@ -166,7 +167,6 @@ void resetPaths(void)
 		pos++;	
 	}
 
-	free(*current_history);
 	free(InitialHomeEnv);
 	free(InitialPathEnv);
 }

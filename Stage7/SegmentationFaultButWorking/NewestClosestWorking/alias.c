@@ -17,22 +17,22 @@ int check_alias(char** commands)
 	{
 		if(strcmp(command_aliases[pos][1], commands[0]) == 0)
 		{
-			char* fixcommand;
-			char* token = (char*) malloc(sizeof(char)*Input_Max);
+			char* token;
 			replace_alias(commands, strdup(command_aliases[pos][0]));
-			fixcommand = charpointertoarray2(commands);
+			char* fixcommand = charpointertoarray(commands, 1);
 			token = strtok(strdup(fixcommand), " \n\t;&><|");
 			char** ncommands = parseInput(token);
-			runProcess(ncommands);
-			int memPos = 0;
-			while(ncommands[memPos] != NULL)
+			int status = runProcess(ncommands);
+			int pos = 0;
+			while(ncommands[pos] != NULL)
 			{
-				free(ncommands[memPos]);
-				memPos++;	
+				free(ncommands[pos]);
+				pos++;	
 			}
 
 			free(ncommands);
-			strcpy(fixcommand, "");
+			free(fixcommand);
+			fixcommand = NULL;
 			token = NULL;
 			return 1;
 		}
@@ -76,9 +76,8 @@ int add_alias(char** commands)
 			if(commands[3] != NULL)
 			{
 				char* commandTemp;
-				commandTemp = charpointertoarray(commands);
-				sprintf(temp, commandTemp);
-				free(commandTemp);
+				commandTemp = charpointertoarray(commands, 0);
+				sprintf(temp, commandTemp);	
 			}
 			else
 			sprintf(temp, commands[2]);
@@ -92,6 +91,7 @@ int add_alias(char** commands)
 	return 0;
 }
 
+
 void replace_alias(char** commands, char* originalValue)
 {
 	int placedTokens = 0;
@@ -99,31 +99,27 @@ void replace_alias(char** commands, char* originalValue)
 	int buffer = 100;
 	char** newCommand = parseInput(originalValue);
 
+
 	while(newCommand[pos] != NULL)
-	{
 		pos++;
-	}
 
 	placedTokens = pos;
 	pos = 1;
+	printf("%d", placedTokens);
 
 	while(commands[pos] != NULL)
 	{
-		newCommand[placedTokens] = (char*) malloc(sizeof(check_external_commands)*20);
+		if(pos>=buffer) {
+			buffer += 100;
+			newCommand = realloc(newCommand, buffer);
+		}
 		strcpy(newCommand[placedTokens], commands[pos]);
 		placedTokens++;
 		pos++;
 	}
 
-	pos = 0;
-	while(commands[pos] != NULL)
-	{
-		free(commands[pos]);
-		pos++;
-	}
-
 	int memPos = 0;
-	while(commands[memPos] == NULL)
+	while(commands[memPos] != NULL)
 	{
 		free(commands[memPos]);
 		memPos++;	
@@ -131,15 +127,17 @@ void replace_alias(char** commands, char* originalValue)
 	free(commands);
 	commands = NULL;
 
-	commands = newCommand;
+	commands = (char**) malloc(sizeof(char*) * buffer);
 
-	/*int copyPos = 0;
+	int copyPos = 0;
 	while(newCommand[copyPos] != NULL)
 	{
-		commands[copyPos] = (char*) malloc(sizeof(char) * 50);
+		commands[copyPos] = (char*) malloc(sizeof(char) * strlen(newCommand[copyPos]));
 		strcpy(commands[copyPos], newCommand[copyPos]);
 		copyPos++;
 	}
+
+	add_to_history(commands[0]);
 
 	memPos = 0;
 	while(newCommand[memPos] == NULL)
@@ -148,7 +146,7 @@ void replace_alias(char** commands, char* originalValue)
 		memPos++;	
 	}
 	free(newCommand);
-	newCommand = NULL;*/
+	newCommand = NULL;
 }
 
 int unalias(char** commands)
@@ -170,14 +168,14 @@ int unalias(char** commands)
 	return 0;
 }
 
-char* charpointertoarray(char** commands)
+char* charpointertoarray(char** commands, int choice)
 {
 	int pos = 2;
 	char* commandToAlias = malloc(1);
+	if(choice == 0)
 	while(commands[pos] != NULL)
 	{
-		strcpy(commandToAlias, "");
-		int buffer = strlen(commands[pos]) + strlen(commandToAlias) + 2;
+		int buffer = strlen(commands[pos]+2) + strlen(commandToAlias);
 		commandToAlias = realloc(commandToAlias, buffer);
 		if(pos == 2)
 			strcat(commandToAlias, commands[pos]);
@@ -185,25 +183,22 @@ char* charpointertoarray(char** commands)
 			strcat(strcat(commandToAlias, " "), commands[pos]);
 		pos++;
 	}
-
-	return commandToAlias;
-}
-
-char* charpointertoarray2(char** commands)
-{
-	int pos = 0;
-	char* commandToAlias = malloc(1);
-	while(commands[pos] != NULL && commands[pos+1] != NULL )
+	else
 	{
-		strcpy(commandToAlias, "");
-		printf("%s\n", commands[pos]);
-		int buffer = strlen(commands[pos]) + strlen(commandToAlias) + 2;
-		commandToAlias = realloc(commandToAlias, buffer);
-		if(pos!= 0)
-			strcat(strcat(commandToAlias, " "), commands[pos]);
-		else
-			strcat(commandToAlias, commands[pos]);
-		pos++;
+		pos = 0;
+		while(commands[pos] != NULL && commands[pos+1] != NULL )
+		{
+			strcpy(commandToAlias, "");
+			printf("%s\n", commands[pos]);
+			int buffer = strlen(commands[pos]+2) + strlen(commandToAlias);
+			commandToAlias = realloc(commandToAlias, buffer);
+			if(pos!= 0)
+				strcat(strcat(commandToAlias, " "), commands[pos]);
+			else
+				strcat(commandToAlias, commands[pos]);
+			pos++;
+		}
 	}
+
 	return commandToAlias;
 }

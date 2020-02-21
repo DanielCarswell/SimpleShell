@@ -18,17 +18,17 @@ int check_alias(char** commands)
 		if(strcmp(command_aliases[pos][1], commands[0]) == 0)
 		{
 			char* fixcommand;
-			char* token = (char*) malloc(sizeof(char)*Input_Max);
+			char* token;
 			replace_alias(commands, strdup(command_aliases[pos][0]));
 			fixcommand = charpointertoarray2(commands);
 			token = strtok(strdup(fixcommand), " \n\t;&><|");
 			char** ncommands = parseInput(token);
-			runProcess(ncommands);
-			int memPos = 0;
-			while(ncommands[memPos] != NULL)
+			int status = runProcess(ncommands);
+			int pos = 0;
+			while(ncommands[pos] != NULL)
 			{
-				free(ncommands[memPos]);
-				memPos++;	
+				free(ncommands[pos]);
+				pos++;	
 			}
 
 			free(ncommands);
@@ -77,8 +77,7 @@ int add_alias(char** commands)
 			{
 				char* commandTemp;
 				commandTemp = charpointertoarray(commands);
-				sprintf(temp, commandTemp);
-				free(commandTemp);
+				sprintf(temp, commandTemp);	
 			}
 			else
 			sprintf(temp, commands[2]);
@@ -106,6 +105,7 @@ void replace_alias(char** commands, char* originalValue)
 
 	placedTokens = pos;
 	pos = 1;
+	printf("%d", placedTokens);
 
 	while(commands[pos] != NULL)
 	{
@@ -131,9 +131,9 @@ void replace_alias(char** commands, char* originalValue)
 	free(commands);
 	commands = NULL;
 
-	commands = newCommand;
+	commands = (char**) malloc(sizeof(char*) * buffer);
 
-	/*int copyPos = 0;
+	int copyPos = 0;
 	while(newCommand[copyPos] != NULL)
 	{
 		commands[copyPos] = (char*) malloc(sizeof(char) * 50);
@@ -148,7 +148,7 @@ void replace_alias(char** commands, char* originalValue)
 		memPos++;	
 	}
 	free(newCommand);
-	newCommand = NULL;*/
+	newCommand = NULL;
 }
 
 int unalias(char** commands)
@@ -176,8 +176,7 @@ char* charpointertoarray(char** commands)
 	char* commandToAlias = malloc(1);
 	while(commands[pos] != NULL)
 	{
-		strcpy(commandToAlias, "");
-		int buffer = strlen(commands[pos]) + strlen(commandToAlias) + 2;
+		int buffer = strlen(commands[pos]+2) + strlen(commandToAlias);
 		commandToAlias = realloc(commandToAlias, buffer);
 		if(pos == 2)
 			strcat(commandToAlias, commands[pos]);
@@ -197,7 +196,7 @@ char* charpointertoarray2(char** commands)
 	{
 		strcpy(commandToAlias, "");
 		printf("%s\n", commands[pos]);
-		int buffer = strlen(commands[pos]) + strlen(commandToAlias) + 2;
+		int buffer = strlen(commands[pos]+2) + strlen(commandToAlias);
 		commandToAlias = realloc(commandToAlias, buffer);
 		if(pos!= 0)
 			strcat(strcat(commandToAlias, " "), commands[pos]);
