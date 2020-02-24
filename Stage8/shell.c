@@ -161,9 +161,8 @@ void resetPaths(void)
 		perror("Environment reset failed.");
 
 
-	if(strcmp(getenv("PWD"), getenv("HOME")) != 0)
-		if(chdir("HOME") != 0)
-				perror("Directory change failed");
+	if(chdir(getenv("HOME")) != 0)
+		perror("Directory change failed");
 
 	if(save_history() == -1)
 		printf("Failed to save history.");

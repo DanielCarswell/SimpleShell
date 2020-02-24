@@ -170,15 +170,13 @@ int save_aliases(void)
   if(fPointer == NULL) return -1;
 
   while(command_aliases[pos][0] != NULL){
-    strcpy(holdValue, strdup(command_aliases[pos][0])); 
-    strcat(holdValue, concat);
+  	sprintf(holdValue, "alias %s %s\n", command_aliases[pos][1], command_aliases[pos][0]);
     fputs(holdValue, fPointer);
-    strcpy(holdValue, strdup(command_aliases[pos][1])); 
-    strcat(holdValue, concat);
-    fputs(holdValue, fPointer);
+    strcpy(holdValue, "");
     pos++;
   }
 
+  fputs("\n", fPointer);
   fclose(fPointer);
   return 0;
 }
@@ -188,7 +186,8 @@ int load_aliases(void)
   	int i = 0;
   	FILE * fPointer;
   	char* strings[Input_Max];
-  	char temp[100] = malloc(100*sizeof(char));
+  	char* token;
+  	char** tokens;
   	char* line = NULL;
   	size_t len = 0;
   	ssize_t read;
@@ -203,19 +202,22 @@ int load_aliases(void)
     	strcpy(strings[i++], line);
   	}
 
-  	int pos = 0;
   	for(int x = 0; x < i-1; x++)
   	{
-  		if(x % 2 != 0)
+  		token = strtok(strings[x], " \n\t;&><|");
+  		tokens = parseInput(token);
+  		add_alias(tokens);
+  			
+  		free(strings[x]);
+  		if(tokens)
   		{
-  			strcat(temp, strcat(" ", strings[x]));
+  			free(tokens);
   		}
-
-  		strcpy();
-		free(strings[x]);
+  		tokens = NULL;
+  		token = NULL;
     }
 
-    free(*strings);
+    free(tokens);
   	fclose(fPointer);
   	if (line)
    		free(line);
