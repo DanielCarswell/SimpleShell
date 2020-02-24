@@ -17,10 +17,27 @@ int check_alias(char** commands)
 	{
 		if(strcmp(command_aliases[pos][1], commands[0]) == 0)
 		{
+			recursive_check_alias(commands, command_aliases[pos][1]);
 			run_alias(commands, strdup(command_aliases[pos][0]));
 			return 1;
 		}
 		pos++;
+	}
+
+	return 0;
+}
+
+int recursive_check_alias(char** commands, char* alias)
+{
+	int position = 0;
+	while(command_aliases[position][1] != NULL)
+	{
+		if(strcmp(alias, command_aliases[position][0]) == 0)
+		{
+			strcpy(commands[0], command_aliases[position][1]);
+			recursive_check_alias(commands, command_aliases[position][1]);
+		}
+		position++;
 	}
 
 	return 0;
@@ -138,7 +155,7 @@ char* charpointertoarray(char** commands, int choice)
 				strcat(commandToAlias, commands[pos]);
 			else
 				strcat(strcat(commandToAlias, " "), commands[pos]);
-		y		pos++;
+			pos++;
 		}
 	else
 	{
