@@ -38,18 +38,21 @@ char* command_aliases[10][2];
 
 int main(void)
 {
-	InitialHomeEnv = (char*) malloc(100*sizeof(char*));
-	InitialPathEnv = (char*) malloc(100*sizeof(char*));
+	InitialHomeEnv = (char*) malloc(sizeof(char)*strlen(getenv("HOME"))+1);
+	InitialPathEnv = (char*) malloc(sizeof(char)*strlen(getenv("PATH"))+1);
 
 	strcpy(InitialHomeEnv,getenv("HOME"));
 	strcpy(InitialPathEnv,getenv("PATH"));
 
 	if (chdir(getenv("HOME")) != 0) {
-		perror("Directory change failed");
+		perror("Directory change failed\n");
 	}
 
 	if(load_history() == -1)
-		printf("Failed to load history");
+		printf("Failed to load history\n");
+
+	if(load_aliases() == -1)
+		printf("Failed to load aliases\n");
 
 	char* line;
 	char* token;
@@ -157,13 +160,17 @@ void resetPaths(void)
 	if(envReset == -1)
 		perror("Environment reset failed.");
 
+
+	if(strcmp(getenv("PWD"), getenv("HOME")) != 0)
+		if(chdir("HOME") != 0)
+				perror("Directory change failed");
+
 	if(save_history() == -1)
-	{
-		if(chdir("HOME") == 0)
-			printf("Failed to save history.");
-		else
-			perror("Directory change failed.");
-	}
+		printf("Failed to save history.");
+		
+
+	if(save_aliases() == -1)
+		printf("Failed to save aliases.");
 
 	int pos = 0;
 	while(current_history[pos] == NULL)

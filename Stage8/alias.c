@@ -29,7 +29,7 @@ int check_alias(char** commands)
 int add_alias(char** commands)
 {
 	char temp[Input_Max];
-	int index = 0;
+	int index = -1;
 
 	for(int i = 0; i < 3; i ++)
 		if(commands[i] == NULL)
@@ -38,7 +38,8 @@ int add_alias(char** commands)
 			return 0;
 		}
 
-	while(index != 10 || command_aliases[index][0] != NULL)
+	index = 0;
+	while(command_aliases[index][0] != NULL)
 	{
 		if(strcmp(command_aliases[index][0], commands[2]) == 0)
 		{
@@ -53,7 +54,10 @@ int add_alias(char** commands)
 	}
 
 	if(index == 10)
-		index = 9;
+	{
+		printf("Max alias limit reached\n");
+		return 0;
+	}
 
 	for(int i = 0; i < 2; i++)
 	{
@@ -84,7 +88,6 @@ void run_alias(char** commands, char* originalValue)
 	int pos = 1;
 	char* token = strtok(originalValue, " ");
 	char** newCommand = parseInput(token);
-
 
 	while(newCommand[placedTokens] != NULL)
 		placedTokens++;
@@ -153,4 +156,68 @@ char* charpointertoarray(char** commands, int choice)
 	}
 
 	return commandToAlias;
+}
+
+int save_aliases(void)
+{
+  int pos = 0;
+  FILE* fPointer;
+  char holdValue[Input_Max];
+  char concat[15];
+  strcpy(concat, "\n");
+  fPointer = fopen(".alias_list", "w");
+  
+  if(fPointer == NULL) return -1;
+
+  while(command_aliases[pos][0] != NULL){
+    strcpy(holdValue, strdup(command_aliases[pos][0])); 
+    strcat(holdValue, concat);
+    fputs(holdValue, fPointer);
+    strcpy(holdValue, strdup(command_aliases[pos][1])); 
+    strcat(holdValue, concat);
+    fputs(holdValue, fPointer);
+    pos++;
+  }
+
+  fclose(fPointer);
+  return 0;
+}
+
+int load_aliases(void)
+{
+  	int i = 0;
+  	FILE * fPointer;
+  	char* strings[Input_Max];
+  	char temp[100] = malloc(100*sizeof(char));
+  	char* line = NULL;
+  	size_t len = 0;
+  	ssize_t read;
+
+  	fPointer = fopen(".alias_list", "r");
+  	if (fPointer == NULL) return -1;
+
+  	while ((read = getline(&line, &len, fPointer)) != EOF) 
+  	{
+    	strings[i] = malloc(100);
+    	line[strlen(line)-1] = '\0';
+    	strcpy(strings[i++], line);
+  	}
+
+  	int pos = 0;
+  	for(int x = 0; x < i-1; x++)
+  	{
+  		if(x % 2 != 0)
+  		{
+  			strcat(temp, strcat(" ", strings[x]));
+  		}
+
+  		strcpy();
+		free(strings[x]);
+    }
+
+    free(*strings);
+  	fclose(fPointer);
+  	if (line)
+   		free(line);
+  	return 0;
 }

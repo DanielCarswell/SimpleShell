@@ -34,7 +34,7 @@ int (*internal_functions[]) (char **) = {
   &unalias
 };
 
-char* command_aliases[10][2];
+char* command_aliases[99][2];
 
 int main(void)
 {
@@ -142,6 +142,7 @@ char** parseInput(char* token)
 	if(tokens[pos] != NULL)
 		tokens[pos] = NULL;
 
+	printf("\n\n%s\n\n", tokens[pos-1]);
 	return tokens;
 }
 

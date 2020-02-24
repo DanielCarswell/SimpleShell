@@ -34,7 +34,7 @@ int (*internal_functions[]) (char **) = {
   &unalias
 };
 
-char* command_aliases[10][2];
+char* command_aliases[99][2];
 
 int main(void)
 {
@@ -136,12 +136,11 @@ char** parseInput(char* token)
 		token = strtok(NULL, Delimiter);
 	}
 
-	//Sometimes an extra position of token is assigned
-	//the last token of the last users input, this checks
-	//if it has occured and sets it to NULL in such case. 
+
 	if(tokens[pos] != NULL)
 		tokens[pos] = NULL;
 
+	printf("\n\n%s\n\n", tokens[pos-1]);
 	return tokens;
 }
 
@@ -157,13 +156,16 @@ void resetPaths(void)
 	if(envReset == -1)
 		perror("Environment reset failed.");
 
-	if(save_history() == -1)
-	{
-		if(chdir("HOME") == 0)
-			printf("Failed to save history.");
-		else
+	if(chdir("HOME") == 0)
 			perror("Directory change failed.");
-	}
+
+
+	if(save_history() == -1)
+		printf("Failed to save history.");
+
+	if(save_aliases() == -1)
+		printf("Failed to save aliases.");
+
 
 	int pos = 0;
 	while(current_history[pos] == NULL)

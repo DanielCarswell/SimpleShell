@@ -7,7 +7,7 @@
 #define Input_Max 512
 
 extern char* internal_commands[];
-extern char* command_aliases[10][2];
+extern char* command_aliases[99][2];
 
 
 int check_alias(char** commands)
@@ -17,7 +17,23 @@ int check_alias(char** commands)
 	{
 		if(strcmp(command_aliases[pos][1], commands[0]) == 0)
 		{
-			run_alias(commands, strdup(command_aliases[pos][0]));
+			char* token;
+			replace_alias(commands, strdup(command_aliases[pos][0]));
+			char* fixcommand = charpointertoarray(commands, 1);
+			token = strtok(strdup(fixcommand), " \n\t;&><|");
+			char** ncommands = parseInput(token);
+			int status = runProcess(ncommands);
+			int pos = 0;
+			while(ncommands[pos] != NULL)
+			{
+				free(ncommands[pos]);
+				pos++;	
+			}
+
+			free(ncommands);
+			free(fixcommand);
+			fixcommand = NULL;
+			token = NULL;
 			return 1;
 		}
 		pos++;
@@ -29,7 +45,7 @@ int check_alias(char** commands)
 int add_alias(char** commands)
 {
 	char temp[Input_Max];
-	int index = 0;
+	int index = -1;
 
 	for(int i = 0; i < 3; i ++)
 		if(commands[i] == NULL)
@@ -38,7 +54,8 @@ int add_alias(char** commands)
 			return 0;
 		}
 
-	while(index != 10 || command_aliases[index][0] != NULL)
+	index = 0;
+	while(command_aliases[index][0] != NULL)
 	{
 		if(strcmp(command_aliases[index][0], commands[2]) == 0)
 		{
@@ -51,9 +68,6 @@ int add_alias(char** commands)
 		}
 		index++;
 	}
-
-	if(index == 10)
-		index = 9;
 
 	for(int i = 0; i < 2; i++)
 	{
@@ -78,27 +92,61 @@ int add_alias(char** commands)
 }
 
 
-void run_alias(char** commands, char* originalValue)
+void replace_alias(char** commands, char* originalValue)
 {
 	int placedTokens = 0;
-	int pos = 1;
-	char* token = strtok(originalValue, " ");
-	char** newCommand = parseInput(token);
+	int pos = 0;
+	int buffer = 100;
+	char** newCommand = parseInput(originalValue);
 
 
-	while(newCommand[placedTokens] != NULL)
-		placedTokens++;
+	while(newCommand[pos] != NULL)
+		pos++;
+
+	placedTokens = pos;
+	pos = 1;
+	printf("%d", placedTokens);
 
 	while(commands[pos] != NULL)
 	{
-		newCommand[placedTokens] = (char*) malloc(sizeof(char)*strlen(commands[pos])+1);
+		if(pos>=buffer) {
+			buffer += 100;
+			newCommand = realloc(newCommand, buffer);
+		}
 		strcpy(newCommand[placedTokens], commands[pos]);
 		placedTokens++;
 		pos++;
 	}
 
-	runProcess(newCommand);
-	token = NULL;
+	int memPos = 0;
+	while(commands[memPos] != NULL)
+	{
+		free(commands[memPos]);
+		memPos++;	
+	}
+	free(commands);
+	commands = NULL;
+
+	commands = (char**) malloc(sizeof(char*) * buffer);
+
+	int copyPos = 0;
+	while(newCommand[copyPos] != NULL)
+	{
+		commands[copyPos] = (char*) malloc(sizeof(char) * strlen(newCommand[copyPos]));
+		strcpy(commands[copyPos], newCommand[copyPos]);
+		copyPos++;
+	}
+
+	add_to_history(commands[0]);
+
+	memPos = 0;
+	while(newCommand[memPos] == NULL)
+	{
+		free(newCommand[memPos]);
+		memPos++;	
+	}
+	free(newCommand);
+	newCommand = NULL;
 }
 
 int unalias(char** commands)
@@ -142,6 +190,8 @@ char* charpointertoarray(char** commands, int choice)
 		pos = 0;
 		while(commands[pos] != NULL && commands[pos+1] != NULL )
 		{
+			
+			printf("%s\n", commands[pos]);
 			int buffer = strlen(commands[pos]+2) + strlen(commandToAlias);
 			commandToAlias = realloc(commandToAlias, buffer);
 			if(pos!= 0)
