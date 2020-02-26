@@ -81,7 +81,6 @@ char** parse_input(char* token)
 	if(tokens[pos] != NULL)
 		tokens[pos] = NULL;
 
-
 	return tokens;
 }
 

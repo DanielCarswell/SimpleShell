@@ -43,7 +43,7 @@ int main(void)
 
 		if(line[0] != '!')
 		{
-			sprintf(temp, "%s", line);
+			sprintf(temp, line);
 			add_to_history(temp);	
 		}
 

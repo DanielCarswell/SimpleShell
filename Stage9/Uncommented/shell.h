@@ -29,6 +29,7 @@ int save_history(void);
 int load_history(void);
 
 /*alias.c*/
+void print_aliases(void);
 int check_alias(char**);
 int add_alias(char**);
 int unalias(char**);

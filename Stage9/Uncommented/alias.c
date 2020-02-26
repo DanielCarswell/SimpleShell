@@ -49,11 +49,16 @@ int add_alias(char** commands)
 	int index = 0;
 
 	for(int i = 0; i < 3; i ++)
+	{
 		if(commands[i] == NULL)
 		{
-			printf("Not enough arguments\n");
+			if(i == 1)
+				print_aliases();
+			else 
+				printf("Not enough arguments\n");
 			return 0;
 		}
+	}
 	
 	while(command_aliases[index][0] != NULL)
 	{
@@ -71,7 +76,7 @@ int add_alias(char** commands)
 
 	if(index == 10)
 	{
-		printf("Max alias limit reached\n");
+		printf("Max alias limit reached\n\n");
 		return 0;
 	}
 
@@ -130,8 +135,17 @@ int unalias(char** commands)
 	{
 		if(strcmp(command_aliases[index][1], commands[1]) == 0)
 		{
-			command_aliases[index][0] = NULL;
-			command_aliases[index][1] = NULL;
+			index++;
+			while(command_aliases[index][0] != NULL)
+			{
+				strcpy(command_aliases[index-1][0], command_aliases[index][0]);
+				strcpy(command_aliases[index-1][1], command_aliases[index][1]);
+				index++;
+			}
+			free(command_aliases[index-1][0]);
+			free(command_aliases[index-1][1]);
+			command_aliases[index-1][0] = NULL;
+			command_aliases[index-1][1] = NULL;
 			printf("Alias removed\n");
 			return 0;
 		}
@@ -139,6 +153,7 @@ int unalias(char** commands)
 	}
 
 	printf("No alias existed\n");
+
 	return 0;
 }
 
@@ -160,6 +175,18 @@ char* tokens_to_line(char** commands)
 	}
 
 	return line;
+}
+
+void print_aliases(void)
+{
+	printf("\n");
+	int pos = 0;
+	while(command_aliases[pos][0] != NULL)
+	{
+		printf("%s - %s\n", command_aliases[pos][1], command_aliases[pos][0]);
+		pos++;
+	}
+	printf("\n");
 }
 
 int save_aliases(void)
