@@ -6,19 +6,11 @@
 #include <sys/wait.h>
 
 extern char* InitialPathEnv;
-extern char* current_history[];
 extern char* internal_commands[];
 extern int (*internal_functions[]) (char**);
 
 void choose_process(char** commands)
 {
-	if(strncmp(commands[0], "!", 1) == 0)
-	{
-		int check = element_in_history(commands);
-		if(check == 1)
-			return;
-	}
-
 	for(int i = 0; i < internal_commands_count(); i++)
 	{
 		if(strcmp(commands[0], internal_commands[i]) == 0)
@@ -56,20 +48,7 @@ void run_process(char** commands)
 			_exit(1);
 		}
 	}
-}
-
-int cd(char** commands)
-{
-	if(commands[1] == NULL)
-		printf("No path change entered\n");
-	
-	else
-		if (chdir(commands[1]) != 0)
-			perror("Directory change failed");
-	
-    return 0;
-}
-
+} 
 
 int get_path(char** commands)
 {

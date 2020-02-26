@@ -98,6 +98,7 @@ int run_history(int i)
 		char* ab = strtok(strdup(current_history[i-1]), " \n");
 		char** ncommands = parse_input(ab);
 		choose_process(ncommands);
+		free(ncommands);
 		ab = NULL;
 	}
 	else

@@ -113,9 +113,6 @@ void startup_initialize(void)
 	if (chdir(getenv("HOME")) != 0) {
 		perror("Directory change failed");
 	}
-
-	if(load_history() == -1)
-		printf("Failed to load history\n");
 }
 
 void exit_program(void)
@@ -125,12 +122,6 @@ void exit_program(void)
 
 	if(setenv("PATH", InitialPathEnv, 1) == -1)
 		perror("Environment reset failed");
-
-	if(chdir(getenv("HOME")) != 0)
-		perror("Directory change failed");
-
-	if(save_history() == -1)
-		printf("Failed to save history.");
 
 	free(InitialHomeEnv);
 	free(InitialPathEnv);

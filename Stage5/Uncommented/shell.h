@@ -24,6 +24,3 @@ int run_history(int);
 int element_in_history(char**);
 void add_to_history(char[]);
 int print_history(char**);
-
-int save_history(void);
-int load_history(void);

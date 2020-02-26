@@ -1,6 +1,7 @@
 #include "shell.h"
 #include "commands.c"
 #include "history.c"
+#include "alias.c"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -14,19 +15,24 @@ char* InitialHomeEnv;
 char* InitialPathEnv;
 
 char* current_history[999];
+char* command_aliases[10][2];
 
 char* internal_commands[] = {
   "getpath",
   "setpath",
   "cd",
-  "history"
+  "history",
+  "alias",
+  "unalias"
 };
 
 int (*internal_functions[]) (char **) = {
   &get_path,
   &set_path,
   &cd,
-  &print_history
+  &print_history,
+  &add_alias,
+  &unalias
 };
 
 int main(void)
@@ -43,7 +49,7 @@ int main(void)
 
 		if(line[0] != '!')
 		{
-			sprintf(temp, "%s", line);
+			sprintf(temp, line);
 			add_to_history(temp);	
 		}
 
@@ -116,6 +122,9 @@ void startup_initialize(void)
 
 	if(load_history() == -1)
 		printf("Failed to load history\n");
+	
+	if(load_aliases() == -1)
+		printf("Failed to load aliases\n");
 }
 
 void exit_program(void)
@@ -131,6 +140,9 @@ void exit_program(void)
 
 	if(save_history() == -1)
 		printf("Failed to save history.");
+
+	if(save_aliases() == -1)
+		printf("Failed to save aliases.");
 
 	free(InitialHomeEnv);
 	free(InitialPathEnv);

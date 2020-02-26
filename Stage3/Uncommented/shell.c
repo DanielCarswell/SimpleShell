@@ -1,6 +1,5 @@
 #include "shell.h"
 #include "commands.c"
-#include "history.c"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -13,20 +12,14 @@
 char* InitialHomeEnv;
 char* InitialPathEnv;
 
-char* current_history[999];
-
 char* internal_commands[] = {
   "getpath",
-  "setpath",
-  "cd",
-  "history"
+  "setpath"
 };
 
 int (*internal_functions[]) (char **) = {
   &get_path,
-  &set_path,
-  &cd,
-  &print_history
+  &set_path
 };
 
 int main(void)
@@ -36,17 +29,9 @@ int main(void)
 	char* line;
 	char* token;
 	char** tokens;
-	char temp[Input_Max];
 
 	while(1) {
 		line = get_user_input();
-
-		if(line[0] != '!')
-		{
-			sprintf(temp, "%s", line);
-			add_to_history(temp);	
-		}
-
 		token = strtok(line, Delimiter);
 		
 		if (token) {
@@ -85,7 +70,7 @@ char** parse_input(char* token)
 		tokens[pos] = token;
 		pos++;
 
-		if(pos >= buffer) {
+		if(pos>=buffer) {
 			buffer += 100;
 			tokens = realloc(tokens, buffer);
 		}
@@ -95,6 +80,7 @@ char** parse_input(char* token)
 
 	if(tokens[pos] != NULL)
 		tokens[pos] = NULL;
+
 
 	return tokens;
 }
@@ -110,27 +96,21 @@ void startup_initialize(void)
 	strcpy(InitialHomeEnv, getenv("HOME"));
 	strcpy(InitialPathEnv, getenv("PATH"));
 
+	if(setenv("PATH", InitialHomeEnv, 1) == -1)
+		perror("Failed to change PATH environment");
+
 	if (chdir(getenv("HOME")) != 0) {
 		perror("Directory change failed");
 	}
-
-	if(load_history() == -1)
-		printf("Failed to load history\n");
 }
 
 void exit_program(void)
 {
 	if(setenv("HOME", InitialHomeEnv, 1) == -1)
-		perror("Environment reset failed");
+		perror("Environment reset failed.");
 
 	if(setenv("PATH", InitialPathEnv, 1) == -1)
-		perror("Environment reset failed");
-
-	if(chdir(getenv("HOME")) != 0)
-		perror("Directory change failed");
-
-	if(save_history() == -1)
-		printf("Failed to save history.");
+		perror("Environment reset failed.");
 
 	free(InitialHomeEnv);
 	free(InitialPathEnv);

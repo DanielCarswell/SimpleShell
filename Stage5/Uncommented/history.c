@@ -106,6 +106,8 @@ int run_history(int i)
 	return 1;
 }
 
+
+
 int print_history(char ** commands)
 {
 	for(int i = 0; i < 1000; i++)
@@ -117,59 +119,4 @@ int print_history(char ** commands)
 	}
 
 	return 0;
-}
-
-int save_history(void)
-{
-	int pos = 0;
-    FILE* fileP;
-    char saveString[Input_Max];
-    char concat[15];
-    strcpy(concat, "\n");
-    fileP = fopen(".hist_list", "w");
-  
-    if(fileP == NULL) return -1;
-
-    while(current_history[pos] != NULL) {
-    	strcpy(saveString, current_history[pos]);  
-    	strcat(saveString, concat);
-    	fputs(saveString, fileP);
-    	pos++;
-  	}
-
-  	fclose(fileP);
-  	return 0;
-}
-
-int load_history(void)
-{
-	FILE* fileP;
-  	char* commands[Input_Max];
-  	char* line = NULL;
-  	size_t len = 0;
-  	ssize_t read;
-  	int i = 0;
-
-  	fileP = fopen(".hist_list", "r");
-  	if (fileP == NULL) return -1;
-
-  	while ((read = getline(&line, &len, fileP)) != EOF) 
-  	{
-    	commands[i] = malloc(100);
-    	line[strlen(line)-1] = '\0';
-    	strcpy(commands[i++], line);
-  	}
-
-  	for(int x = 0; x < i-1; x++)
-  	{
-    	add_to_history(commands[x]);
-    	free(commands[x]);
-	}
-
-	free(*commands);
-  	fclose(fileP);
- 	if (line)
-    	free(line);
-
-  	return 0;
 }

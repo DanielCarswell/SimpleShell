@@ -12,8 +12,8 @@ void ctrlz_ignore(int);
 void ctrlc_ignore(int);
 
 /*Commands.c*/
-void choose_process(char**);
 void run_process(char**);
+void choose_process(char**);
 
 int set_path(char**);
 int get_path(char**);
@@ -27,3 +27,10 @@ int print_history(char**);
 
 int save_history(void);
 int load_history(void);
+
+/*alias.c*/
+int check_alias(char**);
+int add_alias(char**);
+int unalias(char**);
+void run_alias(char**, char*);
+char* tokens_to_line(char**);

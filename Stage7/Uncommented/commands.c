@@ -19,6 +19,10 @@ void choose_process(char** commands)
 			return;
 	}
 
+	int check = check_alias(commands);
+	if(check == 1)
+		return;
+
 	for(int i = 0; i < internal_commands_count(); i++)
 	{
 		if(strcmp(commands[0], internal_commands[i]) == 0)
@@ -62,7 +66,11 @@ int cd(char** commands)
 {
 	if(commands[1] == NULL)
 		printf("No path change entered\n");
-	
+	else if(strcmp(commands[1], "~") == 0)
+	{
+		if (chdir(getenv("HOME")) != 0)
+			perror("Directory change failed");
+	}
 	else
 		if (chdir(commands[1]) != 0)
 			perror("Directory change failed");
