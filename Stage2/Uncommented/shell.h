@@ -10,3 +10,4 @@ void ctrlc_ignore(int);
 
 /*Commands.c*/
 void run_process(char**);
+char* command_line(char**, int);

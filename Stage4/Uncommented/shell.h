@@ -14,6 +14,7 @@ void ctrlc_ignore(int);
 /*Commands.c*/
 void choose_process(char**);
 void run_process(char**);
+char* command_line(char**, int);
 
 int set_path(char**);
 int get_path(char**);

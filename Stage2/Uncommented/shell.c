@@ -34,7 +34,7 @@ int main(void)
 char* get_user_input(void)
 {
 	char *line = (char *) malloc(sizeof(char) * Input_Max);
-	printf("> ");
+	printf("\n> ");
 
 	if(fgets(line, Input_Max, stdin) == NULL)
 	{

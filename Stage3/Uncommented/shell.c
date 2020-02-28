@@ -47,7 +47,7 @@ int main(void)
 char* get_user_input(void)
 {
 	char *line = (char *) malloc(sizeof(char) * Input_Max);
-	printf("> ");
+	printf("\n> ");
 
 	if(fgets(line, Input_Max, stdin) == NULL)
 		exit_program();
@@ -138,4 +138,3 @@ void ctrlc_ignore(int sig_num)
 {
 	signal(SIGINT, ctrlc_ignore);
 } 
-

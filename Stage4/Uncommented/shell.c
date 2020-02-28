@@ -49,7 +49,7 @@ int main(void)
 char* get_user_input(void)
 {
 	char *line = (char *) malloc(sizeof(char) * Input_Max);
-	printf("> ");
+	printf("\n> ");
 
 	if(fgets(line, Input_Max, stdin) == NULL)
 		exit_program();
@@ -102,7 +102,7 @@ void startup_initialize(void)
 	}
 }
 
-void on_exit(void)
+void exit_program(void)
 {
 	if(setenv("HOME", InitialHomeEnv, 1) == -1)
 		perror("Environment reset failed.");
@@ -137,4 +137,3 @@ void ctrlc_ignore(int sig_num)
 {
 	signal(SIGINT, ctrlc_ignore);
 } 
-

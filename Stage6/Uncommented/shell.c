@@ -10,10 +10,12 @@
 #define Input_Max 512
 #define Delimiter " \n\t;&><|"
 
+char* loopstopper;
 char* InitialHomeEnv;
 char* InitialPathEnv;
 
 char* current_history[999];
+char* command_aliases[10][2];
 
 char* internal_commands[] = {
   "getpath",
@@ -40,12 +42,7 @@ int main(void)
 
 	while(1) {
 		line = get_user_input();
-
-		if(line[0] != '!')
-		{
-			sprintf(temp, line);
-			add_to_history(temp);	
-		}
+		sprintf(temp, "%s", line);
 
 		token = strtok(line, Delimiter);
 		
@@ -54,6 +51,9 @@ int main(void)
 			choose_process(tokens);
 			free(tokens);
   		}
+
+  		if(line[0] != '!')
+			add_to_history(temp);	
 	}
 
 	return 0;
@@ -62,7 +62,7 @@ int main(void)
 char* get_user_input(void)
 {
 	char *line = (char *) malloc(sizeof(char) * Input_Max);
-	printf("> ");
+	printf("\n> ");
 
 	if(fgets(line, Input_Max, stdin) == NULL)
 		exit_program();
@@ -116,6 +116,8 @@ void startup_initialize(void)
 
 	if(load_history() == -1)
 		printf("Failed to load history\n");
+
+	loopstopper = malloc(sizeof(char) * Input_Max);
 }
 
 void exit_program(void)
@@ -132,6 +134,7 @@ void exit_program(void)
 	if(save_history() == -1)
 		printf("Failed to save history.");
 
+	free(loopstopper);
 	free(InitialHomeEnv);
 	free(InitialPathEnv);
 
@@ -159,4 +162,3 @@ void ctrlc_ignore(int sig_num)
 {
 	signal(SIGINT, ctrlc_ignore);
 } 
-

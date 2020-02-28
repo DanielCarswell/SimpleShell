@@ -1,6 +1,0 @@
-Gcc Windows to GCC Linux
-
-Sprintfs need to be guarded
-
-tokens_to_line method needs non-strlen memory allocation and to be changed like
-one with this file to use sprints instead because of problems with strcat and strcpy
