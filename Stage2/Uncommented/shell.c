@@ -71,8 +71,11 @@ char** parse_input(char* token)
 		token = strtok(NULL, Delimiter);
 	}
 
-	if(tokens[pos] != NULL)
+	while(tokens[pos] != NULL)
+	{
 		tokens[pos] = NULL;
+		pos++;
+	}
 
 	return tokens;
 }
