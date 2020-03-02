@@ -16,9 +16,9 @@ void choose_process(char**);
 void run_process(char**);
 char* command_line(char**, int);
 
-int set_path(char**);
-int get_path(char**);
-int cd(char**);
+void set_path(char**);
+void get_path(char**);
+void cd(char**);
 
 /*History.c*/
 int run_history(int);
@@ -26,7 +26,7 @@ int element_in_history(char**);
 void positive_history(char**);
 void negative_history(char**);
 void add_to_history(char[]);
-int print_history(char**);
+void print_history(char**);
 
 int save_history(void);
 int load_history(void);

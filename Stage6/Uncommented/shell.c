@@ -24,7 +24,7 @@ char* internal_commands[] = {
   "history"
 };
 
-int (*internal_functions[]) (char **) = {
+void (*internal_functions[]) (char **) = {
   &get_path,
   &set_path,
   &cd,

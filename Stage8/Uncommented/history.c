@@ -167,7 +167,7 @@ int run_history(int i)
 	return 1;
 }
 
-int print_history(char ** commands)
+void print_history(char ** commands)
 {
 	int i;
 	for(i = 0; i < 1000; i++)
@@ -179,7 +179,6 @@ int print_history(char ** commands)
 	}
 
 	printf("%d. history\n", (i+1));
-	return 0;
 }
 
 int save_history(void)
@@ -230,6 +229,7 @@ int load_history(void)
 	}
 
   	fclose(fileP);
+  	
  	if (line)
     	free(line);
 

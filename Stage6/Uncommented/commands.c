@@ -10,7 +10,7 @@
 extern char* InitialPathEnv;
 extern char* current_history[];
 extern char* internal_commands[];
-extern int (*internal_functions[]) (char**);
+extern void (*internal_functions[]) (char**);
 
 void choose_process(char** commands)
 {
@@ -66,7 +66,7 @@ void run_process(char** commands)
 	free(temp);
 }
 
-int cd(char** commands)
+void cd(char** commands)
 {
 	char* temp = malloc(1);
 
@@ -75,7 +75,7 @@ int cd(char** commands)
 	else
 	{
 		printf("No path change entered\n");
-		return 0;
+		return;
 	}
 
 	if(commands[2] != NULL)
@@ -90,21 +90,24 @@ int cd(char** commands)
 			perror(temp);
 	
     free(temp);
-    return 0;
 }
 
-int get_path(char** commands)
+void get_path(char** commands)
 {
-	printf("%s\n", getenv("PATH"));
-	return 0;
+	if(commands[1] == NULL)
+		printf("%s\n", getenv("PATH"));
+	else
+		printf("No parameters allowed for getpath\n");
+	
+	return;
 }
 
-int set_path(char** commands)
+void set_path(char** commands)
 {
 	if(commands[1] == NULL)
 	{
 		printf("No path specified\n");
-		return 0;
+		return;
 	}
 	else if(commands[2] != NULL)
 	{
@@ -114,13 +117,11 @@ int set_path(char** commands)
 	if(strcmp(commands[1], "~") == 0) {
 		if(setenv("PATH", InitialPathEnv, 1) == -1)
 			perror("Failed to reset environment PATH");
-		return 0;
+		return;
 	}
 
 	if(setenv("PATH", commands[1], 1) == -1)
 		perror("Failed to change environment PATH");
-
-	return 0;
 }
 
 char* command_line(char** commands, int position)

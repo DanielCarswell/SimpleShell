@@ -27,8 +27,14 @@ int check_alias(char** commands)
 	return 0;
 }
 
-int add_alias(char** commands)
+void add_alias(char** commands)
 {
+	if(strncmp(commands[0], "alias", 5) != 0)
+	{
+		printf("\n");
+		return;
+	}
+
 	char* commandTemp;
 	char* temp = (char*) malloc(sizeof(char)*Input_Max);
 	int index = 0;
@@ -41,7 +47,7 @@ int add_alias(char** commands)
 				print_aliases();
 			else 
 				printf("Not enough arguments\n");
-			return 0;
+			return;
 		}
 	}
 
@@ -50,26 +56,33 @@ int add_alias(char** commands)
 	if(infinite_alias_check(commands[1], commandTemp))
 	{
 		printf("This alias would cause an infinite loop and was not added.\n");
-		return 0;
+		return;
 	}
 	
 	while(command_aliases[index][0] != NULL)
 	{
-		if(strcmp(command_aliases[index][0], commandTemp) == 0 && strcmp(command_aliases[index][1], commands[1]) != 0)
+		if(strcmp(command_aliases[index][1], commands[1]) == 0 && commandTemp != NULL)
 		{
-			printf("Old alias overwritten with: %s\n", commands[1]);
-			sprintf(temp, "%s", commands[1]);
-			free(command_aliases[index][1]);
-			command_aliases[index][1] = (char *) malloc(sizeof(char) * (strlen(temp)+1));
-			strcpy(command_aliases[index][1], temp);
+			printf("Old alias overwritten, new command: %s\n", commandTemp);
+			free(command_aliases[index][0]);
+			
+			command_aliases[index][0] = (char *) malloc(sizeof(char) * (strlen(commandTemp)+1));
+			strcpy(command_aliases[index][0], commandTemp);
+
 			if(commandTemp)
 				free(commandTemp);
-			return 0;
+
+			return;
+		}
+		else if(commandTemp == NULL)
+		{
+			printf("No command entered to overwrite alias\n");
+			return;
 		}
 		else if(strcmp(command_aliases[index][1], commands[1]) == 0)
 		{
 			printf("This alias already exists for that command\n");
-			return 0;
+			return;
 		}
 		index++;
 	}
@@ -77,7 +90,7 @@ int add_alias(char** commands)
 	if(index == 10)
 	{
 		printf("Max alias limit reached\n");
-		return 0;
+		return;
 	}
 
 	for(int i = 0; i < 2; i++)
@@ -98,8 +111,9 @@ int add_alias(char** commands)
 
 	if(commandTemp)
 		free(commandTemp);
+
 	free(temp);
-	return 0;
+	printf("Alias added successfully\n");
 }
 
 
@@ -126,17 +140,17 @@ void run_alias(char** commands, char* originalValue)
 	token = NULL;
 }
 
-int unalias(char** commands)
+void unalias(char** commands)
 {
 	if(commands[1] == NULL)
 	{
 		printf("\nNo alias entered to remove.\n");
-		return 0;
+		return;
 	}
 	else if(commands[2] != NULL)
 	{
 		printf("\nUnalias only takes one word parameter, not more.\n");
-		return 0;
+		return;
 	}
 	int index = 0;
 	while(command_aliases[index][0] != NULL)
@@ -157,14 +171,12 @@ int unalias(char** commands)
 			command_aliases[index-1][1] = NULL;
 			
 			printf("Alias removed\n");
-			return 0;
+			return;
 		}
 		index++;
 	}
 
 	printf("No alias existed\n");
-
-	return 0;
 }
 
 int infinite_alias_check(char* alias, char* command)
@@ -211,6 +223,9 @@ int save_aliases(void)
     pos++;
   }
 
+  if(command_aliases[0][0] == NULL)
+  	fputs("\n", fileP);
+
   fputs("\n", fileP);
   fclose(fileP);
 
@@ -241,20 +256,23 @@ int load_aliases(void)
   	for(int x = 0; x < i-1; x++)
   	{
   		token = strtok(commands[x], Delimiter);
-  		tokens = parse_input(token);
-  		add_alias(tokens);
-  			
-  		free(commands[x]);
 
-  		if(tokens)
-  			free(tokens);
-  		
+  		if(token)
+  		{
+  			tokens = parse_input(token);
+  			add_alias(tokens);
+  			
+  			free(commands[x]);
+
+  			if(tokens)
+  				free(tokens);
+  		}
+  			
   		tokens = NULL;
   		token = NULL;
     }
 
-    free(tokens);
-  	fclose(fileP);
+    fclose(fileP);
 
   	if (line)
    		free(line);

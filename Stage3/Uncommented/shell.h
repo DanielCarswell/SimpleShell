@@ -16,5 +16,5 @@ void choose_process(char**);
 void run_process(char**);
 char* command_line(char**, int);
 
-int set_path(char**);
-int get_path(char**);
+void set_path(char**);
+void get_path(char**);
