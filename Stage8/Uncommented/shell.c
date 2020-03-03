@@ -133,6 +133,8 @@ void startup_initialize(void)
 
 void exit_program(void)
 {
+	int pos = 0;
+
 	if(setenv("HOME", InitialHomeEnv, 1) == -1)
 		perror("Environment reset failed");
 
@@ -147,6 +149,21 @@ void exit_program(void)
 
 	if(save_aliases() == -1)
 		printf("Failed to save aliases.");
+
+	while(current_history[pos] != NULL)
+	{
+		free(current_history[pos]);
+		pos++;
+	}
+
+	pos = 0;
+
+	while(command_aliases[pos][0] != NULL)
+	{
+		free(command_aliases[pos][0]);
+		free(command_aliases[pos][1]);
+		pos++;
+	}
 
 	free(loopstopper);
 	free(InitialHomeEnv);

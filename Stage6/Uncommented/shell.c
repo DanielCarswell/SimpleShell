@@ -125,6 +125,8 @@ void startup_initialize(void)
 
 void exit_program(void)
 {
+	int pos = 0;
+	
 	if(setenv("HOME", InitialHomeEnv, 1) == -1)
 		perror("Environment reset failed");
 
@@ -136,6 +138,12 @@ void exit_program(void)
 
 	if(save_history() == -1)
 		printf("Failed to save history.");
+
+	while(current_history[pos] != NULL)
+	{
+		free(current_history[pos]);
+		pos++;
+	}
 
 	free(loopstopper);
 	free(InitialHomeEnv);

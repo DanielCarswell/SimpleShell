@@ -122,6 +122,8 @@ void startup_initialize(void)
 
 void exit_program(void)
 {
+	int pos = 0;
+	
 	if(setenv("HOME", InitialHomeEnv, 1) == -1)
 		perror("Environment reset failed");
 
@@ -129,7 +131,13 @@ void exit_program(void)
 		perror("Environment reset failed");
 
 	if(chdir(getenv("HOME")) != 0)
-		perror("Directory change failed");
+		perror("Directory change failed"); 
+
+	while(current_history[pos] != NULL)
+	{
+		free(current_history[pos]);
+		pos++;
+	}
 
 	free(loopstopper);
 	free(InitialHomeEnv);

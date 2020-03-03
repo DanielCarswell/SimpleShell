@@ -79,6 +79,7 @@ void set_path(char** commands)
 	else if(commands[2] != NULL)
 	{
 		printf("Too many arguments, setpath only takes 1 parameter\n");
+		return;
 	}
 
 	if(strcmp(commands[1], "~") == 0) {

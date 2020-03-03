@@ -4,9 +4,11 @@
 #include <unistd.h>
 #include <string.h>
 
+//Definitions for reused values, 512 is input limit, and Delimiter is for tokenizing.
 #define Input_Max 512
 #define Delimiter " \n\t;&><|"
 
+//Getting necessary external global variables for this module.
 extern char* internal_commands[];
 extern char* command_aliases[10][2];
 
@@ -222,35 +224,59 @@ void print_aliases(void)
 	}
 }
 
+//Saves aliases as the full command to create them to .alias_list file overwriting if exists, or creating if not
+//they are saved in this way as they are passed to add_alias when loading them in.
 int save_aliases(void)
 {
-  	int pos = 0;
+	//Initializing local variables.
+	int pos = 0;
   	FILE* fileP;
   	char saveCommand[Input_Max];
   	char concat[15];
+
+  	//Set concat to new line character.
   	strcpy(concat, "\n");
+
+  	//Set fileP to FILE pointer of .alias_list file with writable type.
   	fileP = fopen(".alias_list", "w");
-  
+
+  	//If opening file failed, return -1.
   	if(fileP == NULL) return -1;
 
+  	//Repeats for all command_aliases.
   	while(command_aliases[pos][0] != NULL){
+
+  		//Writes the full command to create the alias to the char* saveCommand.
   		sprintf(saveCommand, "alias %s %s\n", command_aliases[pos][1], command_aliases[pos][0]);
+
+  		//Add saveCommand to the file.
     	fputs(saveCommand, fileP);
+
+    	//Empty the value in saveCommand.
    		strcpy(saveCommand, "");
+
+   		//Increment pos.
     	pos++;
   	}
 
+  	//If their is no aliases, adds just a new line to file.
   	if(command_aliases[0][0] == NULL)
   		fputs("\n", fileP);
 
+  	//Adds new line to file.
   	fputs("\n", fileP);
+
+  	//Close file.
   	fclose(fileP);
 
+  	//Return 0.
   	return 0;
 }
 
+//Loads aliases from the .alias_list file as their commands to create and pass them to add_alias.
 int load_aliases(void)
 {
+	//Initializing local variables.
   	int i = 0;
   	FILE* fileP;
   	char* commands[Input_Max];
@@ -260,39 +286,60 @@ int load_aliases(void)
   	size_t len = 0;
   	ssize_t read;
 
+  	//Sets fileP to FILE pointer of open readable .alias_list file.
   	fileP = fopen(".alias_list", "r");
+
+  	//If fails to open file, then returns -1.
   	if (fileP == NULL) return -1;
 
+  	//Repeats whilst another non-end of field line exists in file.
   	while ((read = getline(&line, &len, fileP)) != EOF) 
   	{
+  		//Allocates memory for position i in commands.
     	commands[i] = malloc((strlen(line)+1)*sizeof(char));
+
+    	//Sets last character of line to null character.
     	line[strlen(line)-1] = '\0';
+
+    	//Copy the current line to commands in position i, then increment i.
     	strcpy(commands[i++], line);
   	}
 
+  	//loops for i-1.
   	for(int x = 0; x < i-1; x++)
   	{
+  		//Set token variable to strtok of command using Delimiter.
   		token = strtok(commands[x], Delimiter);
 
+  		//if token is no null.
   		if(token)
   		{
+  			//Parse token to tokens.
   			tokens = parse_input(token);
+
+  			//Pass tokens to add_alias, to create alias.
   			add_alias(tokens);
   			
+  			//Free memory allocation of position at x of commands.
   			free(commands[x]);
 
+  			//If tokens is not null, frees memory allocation of tokens.
   			if(tokens)
   				free(tokens);
   		}
-  			
+
+  		//Set tokens and token to null.
   		tokens = NULL;
   		token = NULL;
     }
 
+    //Close file pointer.
     fclose(fileP);
 
+    //If line is not null, free memory allocation of line.
   	if (line)
    		free(line);
 
+   	//Returns 0.
   	return 0;
 }

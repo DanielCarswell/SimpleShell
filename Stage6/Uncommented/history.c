@@ -23,9 +23,14 @@ void add_to_history(char temp[])
       		current_history[n] = (char *) malloc(sizeof(char) * (strlen(temp)+1));
       		break;
     	}
+    	else if (i == 999)
+    		n = i;
 
     if(n == 999)
-    	printf("Max history reached");
+    {
+    	printf("Max history reached\n");
+    	return;
+    }
 
     strcpy(current_history[n], temp);
 }
@@ -37,7 +42,7 @@ int element_in_history(char** commands)
 	if(strncmp(&commands[0][1],"\0",1) == 0)
 		printf("No element of history selected\n");
 	else if(strncmp(&commands[0][1],"!",1) == 0)
-		check = run_history(0);
+		check = run_history(1000);
 	else if(strncmp(&commands[0][1], "-", 1) == 0)
 		negative_history(commands);
 	else
@@ -126,7 +131,7 @@ void negative_history(char** commands)
 
 int run_history(int i)
 {
-	if(i<0)
+	if(i < 0)
 	{
 		printf("Negative history elements do not exist\n");
 		return 1;
@@ -134,7 +139,7 @@ int run_history(int i)
 	
 	int pos = 0;
 	
-	if(i == 0)
+	if(i == 1000)
 	{
 		while(current_history[pos] != NULL)
 			pos++;
@@ -154,11 +159,15 @@ int run_history(int i)
 		}
 		printf("Running command: %s\n", current_history[i]);
 		sprintf(loopstopper, "%s", current_history[i]);
-		char* ab = strtok(strdup(current_history[i]), " \n");
-		char** ncommands = parse_input(ab);
-		choose_process(ncommands);
-		free(ncommands);
-		ab = NULL;
+		char* token = strtok(strdup(current_history[i]), " \n");
+		char** ncommands = parse_input(token);
+
+		while(token)
+		{
+			choose_process(ncommands);
+			free(ncommands);
+			token = NULL;
+		}
 	}
 	else
 		printf("No element in history\n");

@@ -207,29 +207,29 @@ void print_aliases(void)
 
 int save_aliases(void)
 {
-  int pos = 0;
-  FILE* fileP;
-  char saveCommand[Input_Max];
-  char concat[15];
-  strcpy(concat, "\n");
-  fileP = fopen(".alias_list", "w");
+  	int pos = 0;
+  	FILE* fileP;
+  	char saveCommand[Input_Max];
+  	char concat[15];
+  	strcpy(concat, "\n");
+  	fileP = fopen(".alias_list", "w");
   
-  if(fileP == NULL) return -1;
+  	if(fileP == NULL) return -1;
 
-  while(command_aliases[pos][0] != NULL){
-  	sprintf(saveCommand, "alias %s %s\n", command_aliases[pos][1], command_aliases[pos][0]);
-    fputs(saveCommand, fileP);
-    strcpy(saveCommand, "");
-    pos++;
-  }
+  	while(command_aliases[pos][0] != NULL){
+  		sprintf(saveCommand, "alias %s %s\n", command_aliases[pos][1], command_aliases[pos][0]);
+    	fputs(saveCommand, fileP);
+   		strcpy(saveCommand, "");
+    	pos++;
+  	}
 
-  if(command_aliases[0][0] == NULL)
+  	if(command_aliases[0][0] == NULL)
+  		fputs("\n", fileP);
+
   	fputs("\n", fileP);
+  	fclose(fileP);
 
-  fputs("\n", fileP);
-  fclose(fileP);
-
-  return 0;
+  	return 0;
 }
 
 int load_aliases(void)
@@ -248,7 +248,7 @@ int load_aliases(void)
 
   	while ((read = getline(&line, &len, fileP)) != EOF) 
   	{
-    	commands[i] = malloc(100);
+    	commands[i] = malloc((strlen(line)+1)*sizeof(char));
     	line[strlen(line)-1] = '\0';
     	strcpy(commands[i++], line);
   	}
