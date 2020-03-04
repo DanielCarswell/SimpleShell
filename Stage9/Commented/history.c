@@ -46,6 +46,11 @@ void add_to_history(char temp[])
     	return;
     }
 
+    //If the temp closes with a new line, set that character to null,
+    //otherwise it will create spaces in display for history.
+    if(temp[strlen(temp)-1] == '\n')
+    	temp[strlen(temp)-1] = '\0';
+
     //Adds temp to current_history in position n.
     strcpy(current_history[n], temp);
 }

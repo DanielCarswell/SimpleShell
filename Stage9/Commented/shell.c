@@ -117,7 +117,7 @@ char* get_user_input(void)
 }
 
 /*
-	This method takes in a char* that as been tokenized, what it does is it will first allocatate
+	This method takes in a char* that as been tokenized, what it does is it will first allocate
 	memory to a local variable tokens, it will ensure that the users first token is not an exit
 	command in which case it will exit. Then it will loop whilst a token exists and add that in a 
 	new position of the local variable tokens, using a buffer to reallocate memory if necessary
@@ -232,7 +232,7 @@ void exit_program(void)
 	if(save_aliases() == -1)
 		printf("Failed to save aliases.");
 
-	//Loops while position of pos in current_history is not null.
+	//Loops while position of pos in current_history is not null, hence another history element exists.
 	while(current_history[pos] != NULL)
 	{
 		//Frees memory allocation in pos of current_history.
@@ -245,7 +245,7 @@ void exit_program(void)
 	//Set pos back to 0.
 	pos = 0;
 
-	//Loops while position of pos in command_aliases is not null.
+	//Loops while position of pos in command_aliases is not null, hence another alias element exists.
 	while(command_aliases[pos][0] != NULL)
 	{
 		//Frees memory allocation in pos of command_aliases.

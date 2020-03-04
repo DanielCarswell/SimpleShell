@@ -32,6 +32,9 @@ void add_to_history(char temp[])
     	return;
     }
 
+    if(temp[strlen(temp)-1] == '\n')
+    	temp[strlen(temp)-1] = '\0';
+
     strcpy(current_history[n], temp);
 }
 
