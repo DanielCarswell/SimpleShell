@@ -110,12 +110,12 @@ void negative_history(char** commands)
 				if(strncmp(&commands[0][3], chars[j], 1) == 0 && strncmp(&commands[0][4], "\0", 1) != 0)
 				{
 					for(int x = 0; x < 10; x++)
-						if(strncmp(&commands[0][4], chars[x], 1) == 0 && strncmp(&commands[0][5], "\0", 1) == 0)
+						if(strncmp(&commands[0][5], chars[x], 1) == 0 && strncmp(&commands[0][5], "\0", 1) == 0)
 						{
 							printf("That element of history is out of bounds\n");
 							return;
 						}
-						else if(strncmp(&commands[0][4], chars[x], 1) == 0 && strncmp(&commands[0][5], "\0", 1) != 0)
+						else if(strncmp(&commands[0][5], chars[x], 1) == 0 && strncmp(&commands[0][5], "\0", 1) != 0)
 						{
 							printf("Not a history element\n");
 							return;
