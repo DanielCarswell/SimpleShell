@@ -1,7 +1,4 @@
 #include "shell.h"
-#include "commands.c"
-#include "history.c"
-#include "alias.c"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -59,6 +56,7 @@ int main(void)
 	char* token;
 	char** tokens;
 	char temp[Input_Max];
+	int addHistCheck = 0;
 
 	//Will loop infinitely, however appropriate exits are achieved where necessary that 
 	//are not affected by this definition of an infinite while loop.
@@ -72,6 +70,13 @@ int main(void)
 
 		//Creates a token using strtok to be parsed.
 		token = strtok(line, Delimiter);
+
+		//Adds history to history if called, otherwise should add after running.
+		if(strcmp(token, "history") == 0)
+		{
+			add_to_history(temp);
+			addHistCheck = 1;
+		}
 		
 		//Whilst the token is not null, runs if.
 		if (token) {
@@ -86,11 +91,14 @@ int main(void)
   		}
 
   		//Whilst a command history was not implicitly called, attempt to add temp as a history element.
-  		if(line[0] != '!')
+  		if(line[0] != '!' && addHistCheck == 0)
 			add_to_history(temp);
 
 		//Frees memory allocation of line, as it will be reallocated memory.
 		free(line);	
+
+		//Reset variable to 0.
+		addHistCheck = 0;
 	}
 
 	//Returns 0 closing the program, however it exits elsewhere and should not hit this line.

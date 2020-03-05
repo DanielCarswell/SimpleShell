@@ -35,6 +35,7 @@ int main(void)
 {
 	startup_initialize();
 
+	int addHistCheck = 0;
 	char* line;
 	char* token;
 	char** tokens;
@@ -46,14 +47,22 @@ int main(void)
 
 		token = strtok(line, Delimiter);
 		
+		if(strcmp(token, "history") == 0)
+		{
+			add_to_history(temp);
+			addHistCheck = 1;
+		}
+
 		if (token) {
 			tokens = parse_input(token);
 			choose_process(tokens);
 			free(tokens);
   		}
 
-  		if(line[0] != '!')
+  		if(line[0] != '!' && addHistCheck == 0)
 			add_to_history(temp);	
+
+		addHistCheck = 0;
 	}
 
 	return 0;

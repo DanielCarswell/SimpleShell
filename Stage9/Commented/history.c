@@ -275,9 +275,6 @@ void print_history(char ** commands)
 		//Prints history element with related number to position.
 		printf("%d. %s\n", (i+1), current_history[i]);
 	}
-
-	//When running history command, shows history was called as it will not be added til after execution.
-	printf("%d. history\n", (i+1));
 }
 
 //Saves history elements to a .hist_list file, overwriting if exists, or creating if not.

@@ -189,8 +189,6 @@ void print_history(char ** commands)
 
 		printf("%d. %s\n", (i+1), current_history[i]);
 	}
-
-	printf("%d. history\n", (i+1));
 }
 
 int save_history(void)
