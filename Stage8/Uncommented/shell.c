@@ -1,7 +1,4 @@
 #include "shell.h"
-#include "commands.c"
-#include "history.c"
-#include "alias.c"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>

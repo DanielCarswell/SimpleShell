@@ -11,7 +11,7 @@ extern char* current_history[];
 
 void add_to_history(char temp[])
 {
-	if(temp == NULL || temp[0] == ' ' || temp[0] == '\r' || strcmp(temp, "\n") == 0 || temp[0] == '\e' 
+	if(temp == NULL || temp[0] == '\r' || strcmp(temp, "\n") == 0 || temp[0] == '\e' 
 		|| temp[0] == '\0' || strncmp(temp, "exit", 4) == 0)
     	return;
 
