@@ -181,8 +181,12 @@ int run_history(int i)
 
 void print_history(char ** commands)
 {
-	int i;
-	for(i = 0; i < 1000; i++)
+	if(commands[1] != NULL)
+	{
+		printf("History commands should not have parameters\n");
+		return;
+	}
+	for(int i = 0; i < 1000; i++)
 	{
 		if(current_history[i] == NULL)
 			break;

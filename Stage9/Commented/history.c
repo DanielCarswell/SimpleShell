@@ -262,11 +262,15 @@ int run_history(int i)
 //Prints all of the elements in current_history.
 void print_history(char ** commands)
 {
-	//Initialising local variable.
-	int i;
-
+	//Checking if additional parameter was passed.
+	if(commands[1] != NULL)
+	{
+		//Prints appropriate message and returns.
+		printf("History commands should not have parameters\n");
+		return;
+	}
 	//Repeating for 0-999.
-	for(i = 0; i < 1000; i++)
+	for(int i = 0; i < 1000; i++)
 	{
 		//If the element at position i of current_history is null, then breaks loop.
 		if(current_history[i] == NULL)
